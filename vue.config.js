@@ -4,5 +4,6 @@ module.exports = {
       preProcessor: 'less',
       patterns: []
     }
-  }
+  },
+  lintOnSave:false
 }

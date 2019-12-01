@@ -37,3 +37,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 --将项目提交本地版本库
 5、git push -u origin master
 --将项目推送到远程仓库
+
+注意:
+如果本地与远程github有冲突，需要先解决冲突
+git pull origin master --allow-unrelated-histories

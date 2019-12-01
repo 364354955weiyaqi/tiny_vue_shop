@@ -47,3 +47,6 @@ git pull origin master --allow-unrelated-histories
 git checkout -b login
 --查看分支
 git branch
+
+--切换分支
+git checkout master/login

@@ -41,3 +41,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 注意:
 如果本地与远程github有冲突，需要先解决冲突
 git pull origin master --allow-unrelated-histories
+
+
+--创建分支:
+git checkout -b login
+--查看分支
+git branch

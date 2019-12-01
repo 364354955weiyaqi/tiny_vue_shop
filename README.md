@@ -42,11 +42,31 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 如果本地与远程github有冲突，需要先解决冲突
 git pull origin master --allow-unrelated-histories
 
-
---创建分支:
+--创建分支方法:
 git checkout -b login
+--切换分支方法:
+git checkout master/login
+--查看差异
+git status
 --查看分支
 git branch
 
---切换分支
-git checkout master/login
+
+分支提交本地，并与本地master合并，再提交master到云端中步骤:
+1.提交到本地分支 git add .
+git commit -m "提交信息"
+git push
+
+2.切换主分支 git checkout master
+merge login分支代码到master
+git merge login
+将本地master分支，推送至云端中
+git push
+
+此时云端只有master分支 将本地login推送到云端的方法:
+1.切换到login分支 git checkout login
+2.git push -u origin login (表示将本地login子分支推送到云端origin仓储里面，同时叫做login子分支来保存)
+
+
+以上总结: 正式项目开发中，一般是提交至本地子分支login中，经过测试没有问题，再合并至主分支master，
+然后将主分支提交到云端中 同时，将子分子login也一并提交至云端。

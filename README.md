@@ -57,7 +57,8 @@ git branch
 git commit -m "提交信息"
 git push
 
-2.切换主分支 git checkout master
+2.切换主分支
+git checkout master
 merge login分支代码到master
 git merge login
 将本地master分支，推送至云端中

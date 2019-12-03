@@ -70,4 +70,9 @@ git push
 
 
 以上总结: 正式项目开发中，一般是提交至本地子分支login中，经过测试没有问题，再合并至主分支master，
-然后将主分支提交到云端中 同时，将子分子login也一并提交至云端。
+然后将主分支提交到云端中 同时，将子分支login也一并提交至云端。
+
+
+
+git clone指定分支:
+git clone -b dev_xx http://10.1.1.101/service/xxxx.git

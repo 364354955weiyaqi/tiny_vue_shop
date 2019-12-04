@@ -3,7 +3,7 @@
     <div class="login-box">
       <!--头像区域-->
       <div class="avatar_box">
-        <img src="../assets/logo.png" alt="">
+        <img src="../assets/img/logo.png" alt="">
       </div>
       <!--登陆表单区域-->
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
@@ -17,7 +17,7 @@
         </el-form-item>
 
         <el-form-item class="btns">
-          <el-button type="primary">登陆</el-button>
+          <el-button type="primary" @click="login">登陆</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -28,21 +28,21 @@
 <script>
 export default {
   name: 'Login',
-  data() {
+  data () {
     return {
       // 这是登陆表单绑定的数据对象
       loginForm: {
-        username: 'zs',
-        password: '123'
+        username: 'admin',
+        password: '123456'
       },
-      //这是表单的验证规则对象
+      // 这是表单的验证规则对象
       loginFormRules: {
-        //验证用户名合法性:
+        // 验证用户名合法性:
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
-        //验证密码合法性:
+        // 验证密码合法性:
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
@@ -51,9 +51,25 @@ export default {
     }
   },
   methods: {
-    //重置方法
-    resetLoginForm() {
+    // 重置方法
+    resetLoginForm () {
       this.$refs.loginFormRef.resetFields()
+    },
+    login: function () {
+      // 点击登陆按钮进行字段验证
+      this.$refs.loginFormRef.validate(async valid => {
+        // 登陆逻辑判断
+        if (!valid) return
+        const { data: res } = await this.$http.post('login', this.loginForm)
+        if (res.meta.status !== 200) {
+          return this.$message.error({ showClose: true, message: '登陆失败！' })
+        }
+        this.$message.success({ showClose: true, message: '登陆成功！' })
+        // 登陆成功之后,token保存于客户端的sessionStore中(因为当前token只在网站打开期间生效)
+        window.sessionStorage.setItem('token', res.data.token)
+        // 登陆成功后，通过编程式跳转到home页面
+        this.$router.push('/home')
+      })
     }
   }
 }

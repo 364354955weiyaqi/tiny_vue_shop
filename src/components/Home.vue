@@ -24,7 +24,7 @@
           collapse-transition表示是否开启折叠动画
         -->
         <el-menu background-color="#333744" text-color="#fff" unique-opened :collapse="isCollapse"
-                 :collapse-transition="false">
+                 :collapse-transition="false" router :default-active="activePath">
           <!--一级菜单-->
           <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
             <!--一级菜单模板区域-->
@@ -34,7 +34,12 @@
               <!--一级菜单文本区域-->
               <span slot="title">{{item.authName}}</span>
             </template>
-            <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+            <!--
+              1.子菜单中index绑定需要跳转的链接，menu菜单的router属性默认会根据该index属性来做跳转
+              2.子菜单被点击时，Click保存当前的激活的链接地址，menu菜单的default-active属性会高亮当前的子菜单
+            -->
+            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children"
+                          :key="subItem.id" @click="saveNavState('/' + subItem.path)">
               <template>
                 <!--二级菜单图标-->
                 <i class="el-icon-menu"></i>
@@ -60,35 +65,48 @@ export default {
   data() {
     return {
       isCollapse: false,
+      // 保存从数据库请求到的菜单项
       menuList: {
         type: Array,
         default: []
       },
+      // 以对象形式存储一级菜单图标
       iconsObj: {
         '125': 'iconfont icon-user',
         '103': 'iconfont icon-3702mima',
         '101': 'iconfont icon-shangpin',
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
-      }
+      },
+      // 被激活的链接地址
+      activePath: ''
     }
   },
   created() {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
+    // 退出
     logout() {
       window.sessionStorage.clear()
       this.$router.push('/login')
     },
+    // 得到菜单数据
     async getMenuList() {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(this.meta.msg)
       this.menuList = res.data
       console.log(res)
     },
+    // 折叠显示
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    // 保存子菜单链接的激活状态,到sessionStorage中
+    saveNavState(activePath) {
+      this.activePath = activePath
+      window.sessionStorage.setItem('activePath', activePath)
     }
     // isCollapse() {
     //   this.isCollapse()
@@ -105,6 +123,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .el-button {
+    font-size: 20px;
+  }
   .home-container {
     height: 100%;
   }
@@ -131,7 +152,7 @@ export default {
     }
   }
   .el-main {
-    background-color: #eadef1;
+    background-color: #eaedf1;
   }
   .iconfont {
     margin-right: 10px;

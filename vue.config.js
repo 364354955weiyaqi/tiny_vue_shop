@@ -5,5 +5,5 @@ module.exports = {
       patterns: []
     }
   },
-  lintOnSave:false
+  lintOnSave: true
 }

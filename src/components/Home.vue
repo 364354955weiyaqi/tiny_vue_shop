@@ -22,6 +22,7 @@
           unique-opened 默认为true，表示每次只展开一个菜单
           collapse表示是否折叠显示
           collapse-transition表示是否开启折叠动画
+          default-active:当前激活菜单的index
         -->
         <el-menu background-color="#333744" text-color="#fff" unique-opened :collapse="isCollapse"
                  :collapse-transition="false" router :default-active="activePath">
@@ -49,7 +50,6 @@
             </el-menu-item>
           </el-submenu>
         </el-menu>
-
       </el-aside>
       <!--右侧主体内容-->
       <el-main>
@@ -103,7 +103,7 @@ export default {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
     },
-    // 保存子菜单链接的激活状态,到sessionStorage中
+    // 将当前激活菜单的inde保存到activePath中,保存子菜单链接的激活状态,到sessionStorage中
     saveNavState(activePath) {
       this.activePath = activePath
       window.sessionStorage.setItem('activePath', activePath)

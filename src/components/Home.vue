@@ -97,7 +97,7 @@ export default {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(this.meta.msg)
       this.menuList = res.data
-      console.log(res)
+      // console.log(res)
     },
     // 折叠显示
     toggleCollapse() {
@@ -124,7 +124,7 @@ export default {
 
 <style lang="less" scoped>
   .el-button {
-    font-size: 20px;
+    font-size: 15px;
   }
   .home-container {
     height: 100%;

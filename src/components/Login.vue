@@ -9,13 +9,18 @@
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
         <!--用户名-->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+          <el-input v-model="loginForm.username"
+                    prefix-icon="iconfont icon-user"
+                    autofocus placeholder="请输入用户名"
+                    clearable></el-input>
         </el-form-item>
         <!--密码-->
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
+          <el-input v-model="loginForm.password"
+                    prefix-icon="iconfont icon-3702mima"
+                    type="password" placeholder="请输入密码"
+                    clearable></el-input>
         </el-form-item>
-
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登陆</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
@@ -39,13 +44,11 @@ export default {
       loginFormRules: {
         // 验证用户名合法性:
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          { required: true, min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
         // 验证密码合法性:
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          { required: true, min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -111,8 +114,9 @@ export default {
         position: absolute;
         bottom: 0; /*form表单底部对齐*/
         width: 100%;
-        padding: 0 20px;
+        padding: 0 40px;
         box-sizing: border-box;
+        display: inline;
       }
     }
   }

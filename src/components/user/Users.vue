@@ -68,13 +68,19 @@
       <!--添加用户对话框-->
       <el-dialog
         title="提示"
-        :visible.sync="addDialogVisible"
-        width="50%"
-        :before-close="handleClose">
-        <!--内容主体区域,添加用户信息-->
-        <el-form :model="addUserForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="活动名称" prop="name">
-            <el-input v-model="ruleForm.name"></el-input>
+        :visible.sync="addDialogVisible" width="50%">
+        <!--内容主体区域,添加用户信息表单-->
+        <el-form :model="addUserForm" :rules="addUserFormRules" ref="ruleAddUserFormRef" label-width="70px">
+          <!--label显示标签名,prop表示验证规则引用的属性名,
+          el-input中的v-model 双向绑定的表单元素 -->
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="addUserForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="addUserForm.password" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="重复密码" prop="repeatPassword">
+            <el-input v-model="addUserForm.repeatPassword" show-password></el-input>
           </el-form-item>
         </el-form>
         <!--底部区域-->
@@ -83,68 +89,102 @@
           <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
         </span>
       </el-dialog>
-
     </el-card>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'users',
-    data() {
-      return {
-        // 获取用户列表的参数对象
-        queryInfo: {
-          query: '',
-          pagenum: 1, // 当前页
-          pagesize: 2 // 每页显示条数
-        },
-        userList: [],
-        total: 0,
-        addDialogVisible: false
+export default {
+  name: 'users',
+  data() {
+    var validatePass1 = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入密码'))
+      } else if (value.toString().length < 6 || value.toString().length > 18) {
+        callback(new Error('密码长度为6 - 18个字符'))
+      } else {
+        callback()
       }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.addUserForm.password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      // 获取用户列表的参数对象
+      queryInfo: {
+        query: '',
+        pagenum: 1, // 当前页
+        pagesize: 2 // 每页显示条数
+      },
+      userList: [],
+      total: 0,
+      addDialogVisible: false,
+      addUserForm: {
+        username: '',
+        password: '',
+        repeatPassword: ''
+      },
+      addUserFormRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, validator: validatePass1, trigger: 'blur' }
+        ],
+        repeatPassword: [
+          { required: true, validator: validatePass2, trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  created() {
+    this.getUserList()
+  },
+  methods: {
+    async getUserList() {
+      const { data: res } = await this.$http.get('users', { params: this.queryInfo })
+      // console.log(res)
+      if (res.meta.status !== 200) return this.$message.error('获取用户列表错误！')
+      this.userList = res.data.users
+      this.total = res.data.total
     },
-    created() {
+    // 修改当前请求的数据条目,并重新请求数据
+    // 重新请求数据的原因：只有重新请求数据，userList的数据才会得到更新,同时因表格与userlist进行了数据绑定,故页面数据才会更新
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize
       this.getUserList()
     },
-    methods: {
-      async getUserList() {
-        const {data: res} = await this.$http.get('users', {params: this.queryInfo})
-        // console.log(res)
-        if (res.meta.status !== 200) return this.$message.error('获取用户列表错误！')
-        this.userList = res.data.users
-        this.total = res.data.total
-      },
-      // 修改当前请求的数据条目,并重新请求数据
-      // 重新请求数据的原因：只有重新请求数据，userList的数据才会得到更新,同时因表格与userlist进行了数据绑定,故页面数据才会更新
-      handleSizeChange(newSize) {
-        this.queryInfo.pagesize = newSize
-        this.getUserList()
-      },
-      // 修改当前页
-      handleCurrentChange(newPage) {
-        this.queryInfo.pagenum = newPage
-        this.getUserList()
-      },
-      async userStateChange(userInfo) {
-        // console.log(userInfo)
-        const {data: res} = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
-        if (res.meta.status !== 200) {
-          userInfo.mg_state = !userInfo.mg_state
-          return this.$message.error('用户状态更新失败!')
-        }
-        return this.$message.success('用户状态更新成功!')
-      },
-      // 关闭添加用户对话框前的回调，会暂停 Dialog 的关闭
-      handleClose(done) {
-        this.$messageBox.confirm('确认关闭？')
+    // 修改当前页
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getUserList()
+    },
+    async userStateChange(userInfo) {
+      // console.log(userInfo)
+      const { data: res } = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
+      if (res.meta.status !== 200) {
+        userInfo.mg_state = !userInfo.mg_state
+        return this.$message.error('用户状态更新失败!')
+      }
+      return this.$message.success('用户状态更新成功!')
+    },
+    // 关闭添加用户对话框前的回调，会暂停 Dialog 的关闭
+    handleClose(done) {
+      this.$messageBox.confirm('确认关闭？')
         .then(_ => {
           done()
         }).catch(_ => {
         })
-      }
     }
   }
+}
 </script>
 
 <style lang="less" scoped>

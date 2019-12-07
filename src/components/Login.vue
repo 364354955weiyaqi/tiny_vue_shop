@@ -56,7 +56,8 @@ export default {
   methods: {
     // 重置方法
     resetLoginForm () {
-      this.$refs.loginFormRef.resetFields()
+      // console.log(this)  // 这里的this指的是谁？this代表的应该是Login.vue父组件，$refs表示子组件中所有的ref属性集合，
+      this.$refs.loginFormRef.resetFields() // ref用在子组件上，指向的是组件实例，可以理解为对子组件的索引，通过ref可能获取到在子组件里定义的属性和方法
     },
     login: function () {
       // 点击登陆按钮进行字段验证

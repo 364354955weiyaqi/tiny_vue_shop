@@ -82,6 +82,9 @@
           <el-form-item label="重复密码" prop="repeatPassword">
             <el-input v-model="addUserForm.repeatPassword" show-password></el-input>
           </el-form-item>
+          <el-form-item label="电话" prop="mobile">
+            <el-input v-model="addUserForm.mobile"></el-input>
+          </el-form-item>
         </el-form>
         <!--底部区域-->
         <span slot="footer" class="dialog-footer">
@@ -115,6 +118,25 @@ export default {
         callback()
       }
     }
+    var validatePhone = (rule, value, callback) => {
+      const phoneReg = /^1[3|4|5|7|8][0-9]{9}$/ //  注意这里不能的引号,如果有引号，需要调用new RegExp(reg)方法,将字符串格式转化为正则表达式
+      if (!value) {
+        callback(new Error('电话号码不能为空'))
+      }
+      setTimeout(() => {
+        // Number.isInteger是es6验证数字是否为整数的方法,但是我实际用的时候输入的数字总是识别成字符串
+        // 所以我就在前面加了一个+实现隐式转换
+        if (!Number.isInteger(+value)) {
+          callback(new Error('请输入数字值'))
+        } else {
+          if (phoneReg.test(value)) {
+            callback()
+          } else {
+            callback(new Error('电话号码格式不正确'))
+          }
+        }
+      }, 100)
+    }
     return {
       // 获取用户列表的参数对象
       queryInfo: {
@@ -140,6 +162,9 @@ export default {
         ],
         repeatPassword: [
           { required: true, validator: validatePass2, trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, validator: validatePhone, trigger: 'blur' }
         ]
       }
     }

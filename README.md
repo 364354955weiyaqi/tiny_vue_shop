@@ -45,7 +45,7 @@ git pull origin master --allow-unrelated-histories
 --创建分支方法:
 git checkout -b login
 --切换分支方法:
-git checkout master/login
+git checkout master|login
 --查看差异
 git status
 --查看分支
